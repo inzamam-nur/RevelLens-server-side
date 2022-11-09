@@ -15,9 +15,13 @@ app.use(express.json());
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.nnocokg.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-  const serviceCollection = client.db("Revelelens_db").collection("services");
 async function run(){
     try{
+
+        const serviceCollection = client.db("Revelelens_db").collection("services");
+        const reviewCOllection = client.db("Revelelens_db").collection("review");
+
+
         app.get("/services",async (req, res) => {
             const query = {}
             const cursor=serviceCollection.find(query);
@@ -38,7 +42,11 @@ async function run(){
             const services = await cursor.toArray();
             res.send( services);
         });
-        
+        app.post('/reviews',  async (req, res) => {
+            const review = req.body;
+            const result = await reviewCOllection.insertOne(review);
+            res.send(result);
+        });
     }
     finally{
 
