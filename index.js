@@ -30,6 +30,14 @@ async function run(){
             const service = await serviceCollection.findOne(query);
             res.send(service);
         });
+
+        app.get('/serviceslimit', async(req, res) =>{
+            const size = 3;
+            const query = {}
+            const cursor =  serviceCollection.find(query).limit(size);
+            const services = await cursor.toArray();
+            res.send( services);
+        });
         
     }
     finally{
