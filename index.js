@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.Port || 5000;
 const cors = require("cors");
 require('dotenv').config();
-const {   ObjectId } = require('mongodb');
+const { mongoose,  ObjectId } = require('mongodb');
 
 
 app.use(cors());
@@ -47,6 +47,20 @@ async function run(){
             const result = await reviewCOllection.insertOne(review);
             res.send(result);
         });
+   
+        app.get('/reviews', async (req, res) => {
+            let query = {};
+
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+
+            const cursor = reviewCOllection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        });
     }
     finally{
 
@@ -62,5 +76,5 @@ app.get("/", (req, res) => {
   
  
   app.listen(port, () => {
-    console.log("running", port);
+    console.log("running api", port);
   });
